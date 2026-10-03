@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.7.24] - 2026-10-03
+
+### 🐛 Bug Fixes
+
+- **Spotify search fails with "Invalid limit"** - Spotify now caps search and catalog-browse requests (search, artist albums, search tracks) at `limit=10` for apps without extended quota mode. Requests exceeding that were rejected with a 400 error.
+
 ## [2.7.23] - 2026-07-28
 
 ### 🐛 Bug Fixes
