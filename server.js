@@ -1860,7 +1860,7 @@ app.get('/api/spotify/search/albums', async (req, res) => {
     }
 
     const query = req.query.q;
-    const limit = parseInt(req.query.limit) || 20;
+    const limit = Math.min(parseInt(req.query.limit) || 20, 10);
     const offset = parseInt(req.query.offset) || 0;
 
     if (!query) {
@@ -1885,7 +1885,7 @@ app.get('/api/spotify/search/artists', async (req, res) => {
     }
 
     const query = req.query.q;
-    const limit = parseInt(req.query.limit) || 20;
+    const limit = Math.min(parseInt(req.query.limit) || 20, 10);
     const offset = parseInt(req.query.offset) || 0;
 
     if (!query) {
@@ -1909,7 +1909,7 @@ app.get('/api/spotify/artists/:id/albums', async (req, res) => {
       await initializeSpotify();
     }
 
-    const limit = parseInt(req.query.limit) || 20;
+    const limit = Math.min(parseInt(req.query.limit) || 20, 10);
     const offset = parseInt(req.query.offset) || 0;
 
     if (!await refreshSpotifyToken()) {
@@ -1976,7 +1976,7 @@ app.get('/api/spotify/search/tracks', async (req, res) => {
     }
 
     const query = req.query.q;
-    const limit = parseInt(req.query.limit) || 20;
+    const limit = Math.min(parseInt(req.query.limit) || 20, 10);
     const offset = parseInt(req.query.offset) || 0;
 
     if (!query) {
