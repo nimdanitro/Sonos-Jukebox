@@ -1494,7 +1494,7 @@ app.get('/api/search/spotify', async (req, res) => {
     }
     const searchType = type === 'show' ? 'show' : type === 'audiobook' ? 'audiobook' : 'album';
 
-    const searchResults = await spotifyApi.search(query, [searchType], { limit: 20 });
+    const searchResults = await spotifyApi.search(query, [searchType], { limit: 10 });
 
     const results = {
       albums: [],
