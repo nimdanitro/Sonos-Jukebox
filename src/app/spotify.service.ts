@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, EMPTY } from 'rxjs';
+import { expand, map, reduce } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Media } from './media';
@@ -10,15 +10,33 @@ import { Media } from './media';
 })
 export class SpotifyService {
 
+  // Spotify caps search/catalog requests at 10 items per page
+  private static readonly PAGE_SIZE = 10;
+
   constructor(private http: HttpClient) {
+  }
+
+  /** Fetches consecutive pages and merges them into one response with up to `total` items. */
+  private getPaged(url: string, params: Record<string, string>, total: number): Observable<any> {
+    const pageSize = SpotifyService.PAGE_SIZE;
+    const fetchPage = (offset: number) => this.http.get<any>(url, {
+      params: { ...params, limit: String(pageSize), offset: String(offset) }
+    }).pipe(map(page => ({ page, offset })));
+
+    return fetchPage(0).pipe(
+      expand(({ page, offset }) => {
+        const next = offset + pageSize;
+        return page?.next && next < total ? fetchPage(next) : EMPTY;
+      }),
+      reduce((items: any[], { page }) => items.concat(page?.items ?? []), [] as any[]),
+      map(items => ({ items: items.slice(0, total) }))
+    );
   }
 
   getMediaByQuery(query: string, category: string): Observable<Media[]> {
     const searchUrl = `${environment.apiUrl}/spotify/search/albums`;
     
-    return this.http.get<any>(searchUrl, { 
-      params: { q: query, limit: '50' }
-    }).pipe(
+    return this.getPaged(searchUrl, { q: query }, 50).pipe(
       map((response: any) => {
         return response.items.map(item => {
           const media: Media = {
@@ -38,9 +56,7 @@ export class SpotifyService {
   getMediaByArtistID(id: string, category: string): Observable<Media[]> {
     const artistUrl = environment.production ? `../api/spotify/artists/${id}/albums` : `http://localhost:8200/api/spotify/artists/${id}/albums`;
     
-    return this.http.get<any>(artistUrl, { 
-      params: { limit: '50' }
-    }).pipe(
+    return this.getPaged(artistUrl, {}, 50).pipe(
       map((response: any) => {
         return response.items.map(item => {
           const media: Media = {
@@ -91,9 +107,7 @@ export class SpotifyService {
   searchAlbums(query: string): Observable<Media[]> {
     const searchUrl = `${environment.apiUrl}/spotify/search/albums`;
     
-    return this.http.get<any>(searchUrl, { 
-      params: { q: query, limit: '20' }
-    }).pipe(
+    return this.getPaged(searchUrl, { q: query }, 20).pipe(
       map((response: any) => {
         return response.items.map(item => {
           const media: Media = {
@@ -113,9 +127,7 @@ export class SpotifyService {
   searchArtists(query: string): Observable<any[]> {
     const searchUrl = `${environment.apiUrl}/spotify/search/artists`;
     
-    return this.http.get<any>(searchUrl, { 
-      params: { q: query, limit: '20' }
-    }).pipe(
+    return this.getPaged(searchUrl, { q: query }, 20).pipe(
       map((response: any) => {
         return response.items.map(item => ({
           id: item.id,
@@ -130,9 +142,7 @@ export class SpotifyService {
   searchTracks(query: string, category: string): Observable<Media[]> {
     const searchUrl = `${environment.apiUrl}/spotify/search/tracks`;
     
-    return this.http.get<any>(searchUrl, { 
-      params: { q: query, limit: '20' }
-    }).pipe(
+    return this.getPaged(searchUrl, { q: query }, 20).pipe(
       map((response: any) => {
         return response.items.map(item => {
           const media: Media = {
