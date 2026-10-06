@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.7.26] - 2026-10-06
+
+### ✨ Improvements
+
+- **Spotify search pagination** - Since Spotify limits search and catalog requests to 10 items, the client now fetches consecutive pages (offset 0, 10, 20, …) and merges them, returning up to 50 results for album/artist-album lists and 20 for album, artist and track searches.
+
 ## [2.7.25] - 2026-10-06
 
 ### 🐛 Bug Fixes
