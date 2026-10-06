@@ -48,6 +48,8 @@ export class HomePage implements OnInit, OnDestroy, AfterViewInit {
   filteredArtists: Artist[] = [];
   filteredMedia: Media[] = [];
   clientName = '';
+  clients: { id: string; name: string }[] = [];
+  currentClientId = '';
   enableAlarmClock = true;
   enableContentSearch = false;
   spotifyConfigured = false;
@@ -351,6 +353,26 @@ export class HomePage implements OnInit, OnDestroy, AfterViewInit {
     } else {
       this.clockTapTimeout = setTimeout(() => { this.clockTapCount = 0; }, 3000);
     }
+  }
+
+  async loadClients() {
+    this.currentClientId = this.clientService.getClientId();
+    try {
+      this.clients = (await this.http.get<any[]>(`${environment.apiUrl}/clients`).toPromise()) || [];
+    } catch (err) {
+      console.error('Could not load clients:', err);
+    }
+  }
+
+  switchClient(client: { id: string }) {
+    if (client.id === this.currentClientId) {
+      return;
+    }
+    this.clientService.setClientId(client.id);
+    // Drop ?client= so it doesn't override the new selection, then reload
+    const url = new URL(window.location.href);
+    url.searchParams.delete('client');
+    window.location.replace(url.toString());
   }
 
   configButtonPressed() {

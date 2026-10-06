@@ -42,6 +42,7 @@
 }
 
 .client-name {
+  cursor: pointer;
   display: inline-block;
   max-width: 120px;
   overflow: hidden;
@@ -135,5 +136,13 @@ ion-infinite-scroll-content {
     &:active {
       background: var(--surface-hover);
     }
+  }
+}
+
+.client-popover {
+  --width: 200px;
+  ion-item.selected {
+    --color: var(--primary-light, #a29bfe);
+    font-weight: 600;
   }
 }

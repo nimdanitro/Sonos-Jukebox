@@ -1,7 +1,19 @@
 <ion-header class="modern-header">
   <ion-toolbar class="modern-toolbar">
     <ion-buttons *ngIf="clientName" slot="start">
-      <span class="client-name modern-title">{{clientName}}</span>
+      <span id="client-tile" class="client-name modern-title" (click)="loadClients()">{{clientName}}</span>
+      <ion-popover trigger="client-tile" triggerAction="click" alignment="start" side="bottom" [dismissOnSelect]="true" class="client-popover">
+        <ng-template>
+          <ion-content>
+            <ion-list lines="none">
+              <ion-item *ngFor="let c of clients" button detail="false" [class.selected]="c.id === currentClientId" (click)="switchClient(c)">
+                <ion-label>{{c.name}}</ion-label>
+                <ion-icon *ngIf="c.id === currentClientId" name="checkmark" slot="end"></ion-icon>
+              </ion-item>
+            </ion-list>
+          </ion-content>
+        </ng-template>
+      </ion-popover>
     </ion-buttons>
     <ion-segment value="{{this.category}}" (ionChange)="categoryChanged($event)" scrollable="true">
       <ion-segment-button
