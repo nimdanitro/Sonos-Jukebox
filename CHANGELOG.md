@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.7.27] - 2026-10-06
+
+### ✨ Improvements
+
+- **Switch user from the home screen** - Tapping the user name tile in the top left opens a popover listing all active clients; selecting one switches to that user and reloads the media list.
+
 ## [2.7.26] - 2026-10-06
 
 ### ✨ Improvements
